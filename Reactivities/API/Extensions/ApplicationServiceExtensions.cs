@@ -11,7 +11,7 @@ namespace API.Extensions
 {
     public static class ApplicationServiceExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, 
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration config)
         {
             services.AddSwaggerGen(c =>
@@ -20,7 +20,7 @@ namespace API.Extensions
             });
             services.AddDbContext<DataContext>(opts =>
             {
-                opts.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+                object value = opts.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(opts =>
             {
