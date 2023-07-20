@@ -1,34 +1,41 @@
-import { Activity } from '../../../app/models/activity'
+import { useStore } from '../../../app/stores/store'
+import LoadingComponent from '../../../app/layout/LoadingComponent'
 
-interface Props {
-    selectedActivity: Activity | undefined
-    cancelSelectedActivity: () => void
-    openForm: (id: string) => void
-}
+function ActivityDetails() {
+    const { activityStore } = useStore()
+    const {
+        selectedActivity: activity,
+        openForm,
+        cancelSelectedActivity,
+    } = activityStore
 
-function ActivityDetails({ selectedActivity, cancelSelectedActivity, openForm }: Props) {
+    if (!activity) return <LoadingComponent />
+
     return (
         <>
-            {selectedActivity && (
+            {activity && (
                 <div className="ui card fluid">
                     <div className="image">
                         <img
-                            src={`/assets/categoryImages/${selectedActivity.category}.jpg`}
-                            alt={selectedActivity.title}
+                            src={`/assets/categoryImages/${activity.category}.jpg`}
+                            alt={activity.title}
                         />
                     </div>
                     <div className="content">
-                        <div className="header">{selectedActivity.title}</div>
+                        <div className="header">{activity.title}</div>
                         <div className="meta">
-                            <span>{selectedActivity.date}</span>
+                            <span>{activity.date}</span>
                         </div>
                         <div className="description">
-                            {selectedActivity.description}
+                            {activity.description}
                         </div>
                     </div>
                     <div className="extra content">
                         <div className="ui buttons fluid">
-                            <button onClick={() => openForm(selectedActivity.id)} className="ui basic blue button">
+                            <button
+                                onClick={() => openForm(activity.id)}
+                                className="ui basic blue button"
+                            >
                                 Edit
                             </button>
                             <button

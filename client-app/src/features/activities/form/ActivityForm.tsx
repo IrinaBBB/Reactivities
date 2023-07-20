@@ -1,15 +1,18 @@
 import { Form, FormInput, FormTextArea, Segment } from 'semantic-ui-react'
-import { Activity } from '../../../app/models/activity'
 import { ChangeEvent, useState } from 'react'
+import { useStore } from '../../../app/stores/store'
+import { observer } from 'mobx-react-lite'
 
-interface Props {
-    selectedActivity: Activity | undefined
-    closeForm: () => void
-    createOrEdit: (activity: Activity) => void
-    submitting: boolean
-}
+function ActivityForm() {
+    const { activityStore } = useStore()
+    const {
+        selectedActivity,
+        closeForm,
+        createActivity,
+        updateActivity,
+        loading,
+    } = activityStore
 
-function ActivityForm({ selectedActivity, closeForm, createOrEdit, submitting }: Props) {
     const initialState = selectedActivity ?? {
         id: '',
         title: '',
@@ -23,10 +26,12 @@ function ActivityForm({ selectedActivity, closeForm, createOrEdit, submitting }:
     const [activity, setActivity] = useState(initialState)
 
     function handleSubmit() {
-        createOrEdit(activity)
+        activity.id ? updateActivity(activity) : createActivity(activity)
     }
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    function handleInputChange(
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) {
         const { name, value } = event.target
         setActivity({ ...activity, [name]: value })
     }
@@ -71,7 +76,12 @@ function ActivityForm({ selectedActivity, closeForm, createOrEdit, submitting }:
                     name="venue"
                     onChange={handleInputChange}
                 />
-                <button className={`ui green button right floated ${submitting && 'loading'}`} type="submit">
+                <button
+                    className={`ui green button right floated ${
+                        loading && 'loading'
+                    }`}
+                    type="submit"
+                >
                     Submit
                 </button>
                 <button
@@ -86,4 +96,4 @@ function ActivityForm({ selectedActivity, closeForm, createOrEdit, submitting }:
     )
 }
 
-export default ActivityForm
+export default observer(ActivityForm)

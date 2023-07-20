@@ -1,25 +1,19 @@
-import { Activity } from '../../../app/models/activity'
 import { Segment } from 'semantic-ui-react'
-import {SyntheticEvent, useState} from 'react'
+import { SyntheticEvent, useState } from 'react'
+import { useStore } from '../../../app/stores/store'
+import { observer } from 'mobx-react-lite'
 
-interface Props {
-    activities: Activity[]
-    setSelectedActivity: (id: string) => void
-    deleteActivity: (id: string) => void
-    submitting: boolean
-}
-
-function ActivityList({
-    activities,
-    setSelectedActivity,
-    deleteActivity,
-    submitting,
-}: Props) {
+function ActivityList() {
+    const { activityStore } = useStore()
+    const { deleteActivity, activities, loading } = activityStore
     const [target, setTarget] = useState('')
 
-    function handleActivityDelete(event: SyntheticEvent<HTMLButtonElement>, id: string) {
+    function handleActivityDelete(
+        event: SyntheticEvent<HTMLButtonElement>,
+        id: string
+    ) {
         setTarget(event.currentTarget.name)
-        deleteActivity(id)
+        deleteActivity(id).then()
     }
 
     return (
@@ -42,14 +36,18 @@ function ActivityList({
                                 <button
                                     className="ui blue button right floated"
                                     onClick={() =>
-                                        setSelectedActivity(activity.id)
+                                        activityStore.selectActivity(
+                                            activity.id
+                                        )
                                     }
                                 >
                                     View
                                 </button>
                                 <button
                                     className={`ui red button right floated ${
-                                        submitting && target === activity.id && 'loading'
+                                        loading &&
+                                        target === activity.id &&
+                                        'loading'
                                     }`}
                                     onClick={(event) =>
                                         handleActivityDelete(event, activity.id)
@@ -70,4 +68,4 @@ function ActivityList({
     )
 }
 
-export default ActivityList
+export default observer(ActivityList)

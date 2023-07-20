@@ -26,7 +26,7 @@ const requests = {
         axios.post<T>(url, body).then(responseBody),
     put: <T>(url: string, body: any) =>
         axios.put<T>(url, body).then(responseBody),
-    delete: <T>(url: string) => axios.delete(url).then(responseBody),
+    delete: <T>(url: string) => axios.delete<T>(url).then(responseBody),
 }
 
 const Activities = {
