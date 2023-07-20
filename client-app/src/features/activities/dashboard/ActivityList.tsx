@@ -1,13 +1,27 @@
 import { Activity } from '../../../app/models/activity'
 import { Segment } from 'semantic-ui-react'
+import {SyntheticEvent, useState} from 'react'
 
 interface Props {
     activities: Activity[]
     setSelectedActivity: (id: string) => void
     deleteActivity: (id: string) => void
+    submitting: boolean
 }
 
-function ActivityList({ activities, setSelectedActivity, deleteActivity }: Props) {
+function ActivityList({
+    activities,
+    setSelectedActivity,
+    deleteActivity,
+    submitting,
+}: Props) {
+    const [target, setTarget] = useState('')
+
+    function handleActivityDelete(event: SyntheticEvent<HTMLButtonElement>, id: string) {
+        setTarget(event.currentTarget.name)
+        deleteActivity(id)
+    }
+
     return (
         <Segment>
             <div className="ui divided items">
@@ -27,13 +41,20 @@ function ActivityList({ activities, setSelectedActivity, deleteActivity }: Props
                             <div className="extra">
                                 <button
                                     className="ui blue button right floated"
-                                    onClick={() => setSelectedActivity(activity.id)}
+                                    onClick={() =>
+                                        setSelectedActivity(activity.id)
+                                    }
                                 >
                                     View
                                 </button>
                                 <button
-                                    className="ui red button right floated"
-                                    onClick={() => deleteActivity(activity.id)}
+                                    className={`ui red button right floated ${
+                                        submitting && target === activity.id && 'loading'
+                                    }`}
+                                    onClick={(event) =>
+                                        handleActivityDelete(event, activity.id)
+                                    }
+                                    name={activity.id}
                                 >
                                     Delete
                                 </button>
